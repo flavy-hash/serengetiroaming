@@ -4,11 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -39,6 +41,15 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    /**
+     * The site has no public sign-up, so every user is an admin created
+     * with `php artisan make:filament-user`.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
     protected function casts(): array
     {
         return [
