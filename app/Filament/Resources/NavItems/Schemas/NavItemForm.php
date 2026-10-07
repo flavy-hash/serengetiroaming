@@ -97,7 +97,7 @@ class NavItemForm
      */
     private static function linkSuggestions(): array
     {
-        $links = collect(['/', '/about', '/about#team', '/about#reviews', '/faq', '/contact']);
+        $links = collect(['/', '/about', '/about#team', '/reviews', '/faq', '/contact']);
 
         foreach (TourCategory::cases() as $category) {
             $links->push('/'.$category->value);
