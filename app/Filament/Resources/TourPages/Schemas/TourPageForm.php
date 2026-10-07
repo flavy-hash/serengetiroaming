@@ -4,6 +4,7 @@ namespace App\Filament\Resources\TourPages\Schemas;
 
 use App\Enums\SafariTier;
 use App\Enums\TourCategory;
+use App\Support\Seo;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
@@ -118,10 +119,27 @@ class TourPageForm
                             ->helperText('One or two sentences. Leave empty to use the start of the overview.')
                             ->columnSpanFull(),
                     ]),
-                Textarea::make('meta_description')
-                    ->label('Search engine description')
-                    ->rows(2)
-                    ->maxLength(255),
+                Section::make('Google search result')
+                    ->description('How this page appears in Google. Leave empty to use the package name, duration and short description.')
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('seo_title')
+                            ->label('Search engine title')
+                            ->maxLength(70)
+                            ->placeholder(fn (Get $get) => collect([$get('package_name'), $get('duration')])->filter()->implode(' – ') ?: 'Machame Route – 7 Days')
+                            ->live(debounce: 500)
+                            ->hint(fn (?string $state) => mb_strlen((string) $state).' / '.Seo::TITLE_LIMIT)
+                            ->hintColor(fn (?string $state) => mb_strlen((string) $state) > Seo::TITLE_LIMIT ? 'danger' : 'gray')
+                            ->helperText('"| Serengeti Roaming" is added automatically when it fits.'),
+                        Textarea::make('meta_description')
+                            ->label('Search engine description')
+                            ->rows(2)
+                            ->maxLength(255)
+                            ->live(debounce: 500)
+                            ->hint(fn (?string $state) => mb_strlen((string) $state).' / '.Seo::DESCRIPTION_LIMIT)
+                            ->hintColor(fn (?string $state) => mb_strlen((string) $state) > Seo::DESCRIPTION_LIMIT ? 'danger' : 'gray')
+                            ->helperText('One or two sentences that make people want to click, e.g. what is included and from what price.'),
+                    ]),
                 Grid::make(2)->schema([
                     Toggle::make('is_published')
                         ->label('Published')
