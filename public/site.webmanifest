@@ -1,0 +1,11 @@
+{
+    "name": "Serengeti Roaming African Safaris",
+    "short_name": "Serengeti Roaming",
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    ],
+    "theme_color": "#344723",
+    "background_color": "#f6efe4",
+    "display": "browser"
+}

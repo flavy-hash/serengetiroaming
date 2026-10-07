@@ -35,8 +35,7 @@ class NavItemsTable
                     ->label('Dropdown links')
                     ->state(fn (NavItem $record) => collect($record->links)->pluck('label')->implode(', '))
                     ->limit(60)
-                    ->placeholder('—')
-                    ->wrap(),
+                    ->placeholder('—'),
                 ToggleColumn::make('is_visible')
                     ->label('Visible'),
             ])

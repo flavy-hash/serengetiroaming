@@ -29,8 +29,8 @@ class FaqsTable
             ->columns([
                 TextColumn::make('question')
                     ->searchable()
-                    ->wrap()
-                    ->limit(120)
+                    ->limit(60)
+                    ->tooltip(fn (Faq $record) => $record->question)
                     ->description(fn (Faq $record) => collect([
                         $record->name ? 'Asked by '.$record->name : 'Added by admin',
                         $record->tourPage?->package_name,

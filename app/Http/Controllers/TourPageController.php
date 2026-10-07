@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Enums\SafariTier;
 use App\Enums\TourCategory;
 use App\Models\Faq;
+use App\Models\Review;
 use App\Models\TourPage;
+use App\Support\ItineraryPdf;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Response;
 
 class TourPageController extends Controller
 {
@@ -48,6 +51,19 @@ class TourPageController extends Controller
     }
 
     /**
+     * /{category}/{slug}/itinerary.pdf — the package as a printable, downloadable itinerary.
+     */
+    public function pdf(string $category, string $slug): Response
+    {
+        $page = TourPage::where('category', TourCategory::from($category))
+            ->where('slug', $slug)
+            ->when(! $this->canPreview(), fn ($q) => $q->published())
+            ->firstOrFail();
+
+        return ItineraryPdf::make($page)->download(ItineraryPdf::filename($page));
+    }
+
+    /**
      * /safaris — every published package from every section, filterable by
      * destination, style (tier) and duration.
      */
@@ -81,7 +97,10 @@ class TourPageController extends Controller
 
         $faqs = Faq::visible()->where('tour_page_id', $page->getKey())->orderBy('sort_order')->get();
 
-        return view('pages.tour', compact('page', 'others', 'faqs'));
+        $reviews = Review::published()->where('tour_page_id', $page->getKey())->showcase()->limit(6)->get();
+        $reviewStats = Review::published()->where('tour_page_id', $page->getKey())->selectRaw('count(*) as total, avg(rating) as average')->first();
+
+        return view('pages.tour', compact('page', 'others', 'faqs', 'reviews', 'reviewStats'));
     }
 
     /**
