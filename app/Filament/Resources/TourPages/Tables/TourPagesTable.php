@@ -76,6 +76,12 @@ class TourPagesTable
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                     ->color('gray')
                     ->url(fn (TourPage $record) => $record->url(), shouldOpenInNewTab: true),
+                Action::make('pdf')
+                    ->label('PDF')
+                    ->icon(Heroicon::OutlinedArrowDownTray)
+                    ->color('gray')
+                    ->tooltip('Download the itinerary as a PDF, e.g. to attach to a quote')
+                    ->url(fn (TourPage $record) => $record->pdfUrl()),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Duplicate')
