@@ -17,6 +17,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class ContactMessagesTable
 {
@@ -36,8 +37,8 @@ class ContactMessagesTable
                     ->description(fn (ContactMessage $record) => $record->email),
                 TextColumn::make('message')
                     ->searchable(['subject', 'message'])
-                    ->limit(90)
-                    ->wrap()
+                    ->limit(50)
+                    ->tooltip(fn (ContactMessage $record) => Str::limit($record->message, 300))
                     ->description(fn (ContactMessage $record) => $record->subject, position: 'above'),
                 TextColumn::make('status')
                     ->state(fn (ContactMessage $record) => $record->isHandled() ? 'Handled' : 'Needs reply')
