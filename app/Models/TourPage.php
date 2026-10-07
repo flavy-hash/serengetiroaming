@@ -17,6 +17,7 @@ class TourPage extends Model
         'slug',
         'is_published',
         'sort_order',
+        'seo_title',
         'meta_description',
         'banner_image',
         'banner_badge',
@@ -88,6 +89,45 @@ class TourPage extends Model
         return $this->isMain()
             ? url($this->category->value)
             : url("{$this->category->value}/{$this->slug}");
+    }
+
+    /**
+     * Local file path of an uploaded image, for the PDF renderer (which doesn't
+     * fetch images over HTTP). Full URLs and missing files return null.
+     */
+    public static function imagePath(?string $path): ?string
+    {
+        if (blank($path) || Str::startsWith($path, ['http://', 'https://'])) {
+            return null;
+        }
+
+        $file = storage_path('app/public/'.ltrim($path, '/'));
+
+        return is_file($file) ? $file : null;
+    }
+
+    /**
+     * The search-engine title before the brand is added, e.g. "Machame Route – 7 Days".
+     * A section's main page (/kilimanjaro) also names the section, which is what people
+     * search for: "Kilimanjaro: Machame Route – 7 Days".
+     */
+    public function seoTitle(): string
+    {
+        if ($this->seo_title) {
+            return $this->seo_title;
+        }
+
+        $title = collect([$this->package_name, $this->duration])->filter()->implode(' – ');
+        $section = $this->category->getLabel();
+
+        return $this->isMain() && ! Str::contains($this->package_name, $section, ignoreCase: true)
+            ? "{$section}: {$title}"
+            : $title;
+    }
+
+    public function pdfUrl(): string
+    {
+        return url("{$this->category->value}/{$this->slug}/itinerary.pdf");
     }
 
     /**
