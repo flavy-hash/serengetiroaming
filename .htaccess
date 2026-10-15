@@ -1,0 +1,19 @@
+# Safety net for hosting where the domain points at the project folder instead of
+# public/ (the correct setup is document root = public/). Every request is served
+# from public/, so the database, logs, .env and source code can never be downloaded.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Already inside public/ — let public/.htaccess handle it.
+    RewriteRule ^public/ - [L]
+
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# If rewriting is unavailable, still refuse to serve anything outside public/.
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
