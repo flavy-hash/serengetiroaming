@@ -11,6 +11,7 @@ use Filament\Support\Contracts\HasLabel;
 enum TourCategory: string implements HasLabel
 {
     case Safaris = 'safaris';
+    case NorthernCircuit = 'northern-circuit';
     case SouthernCircuit = 'southern-circuit';
     case Kilimanjaro = 'kilimanjaro';
     case Zanzibar = 'zanzibar';
@@ -20,10 +21,23 @@ enum TourCategory: string implements HasLabel
     {
         return match ($this) {
             self::Safaris => 'Safaris',
+            self::NorthernCircuit => 'Northern Circuit',
             self::SouthernCircuit => 'Southern Circuit',
             self::Kilimanjaro => 'Kilimanjaro',
             self::Zanzibar => 'Zanzibar',
             self::DayTrips => 'Day Trips',
+        };
+    }
+
+    /**
+     * For headings like "Luxury Kilimanjaro Packages" on the filtered listing page.
+     */
+    public function getPackagesHeading(): string
+    {
+        return match ($this) {
+            self::Safaris => 'Safari Packages',
+            self::DayTrips => 'Day Trips',
+            default => $this->getLabel().' Packages',
         };
     }
 
@@ -43,6 +57,7 @@ enum TourCategory: string implements HasLabel
     {
         return match ($this) {
             self::Safaris => 'Tailor-made Tanzania safari packages for every budget — from budget to luxury.',
+            self::NorthernCircuit => 'The classic safari route — the Serengeti, Ngorongoro Crater, Tarangire and Lake Manyara.',
             self::SouthernCircuit => 'Explore Ruaha National Park, Nyerere & Selous, Mikumi and the Udzungwa Mountains.',
             self::Kilimanjaro => "Climb Africa's highest peak via Machame, Lemosho, Marangu, or take a day hike.",
             self::Zanzibar => 'Beach holidays, Stone Town tours, spice tours and boat trips & snorkeling in Zanzibar, Tanzania.',
