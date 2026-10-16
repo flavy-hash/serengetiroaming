@@ -46,13 +46,34 @@ class NavItemForm
                     ->schema([
                         Repeater::make('links')
                             ->hiddenLabel()
+                            ->itemLabel(fn (array $state) => $state['label'] ?? null)
+                            ->collapsible()
                             ->schema([
                                 TextInput::make('label')->required()->maxLength(80),
                                 TextInput::make('href')
                                     ->label('Link')
                                     ->required()
                                     ->maxLength(255)
-                                    ->datalist($suggestions),
+                                    ->datalist($suggestions)
+                                    ->helperText('Add a filter to open the page already filtered, e.g. /safaris?tier=luxury or /accommodations?location=serengeti.'),
+                                Section::make('Hover preview (optional)')
+                                    ->description('Shown in the dropdown while a visitor points at this link. Left empty, it is filled in from the page the link opens (package photo and summary, or the style description).')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->columns(2)
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        TextInput::make('preview_title')->label('Heading')->maxLength(120),
+                                        TextInput::make('preview_cta')->label('Button text')->maxLength(50),
+                                        Textarea::make('preview_text')->label('Text')->rows(2)->maxLength(300)->columnSpanFull(),
+                                        FileUpload::make('preview_image')
+                                            ->label('Photo')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('menus')
+                                            ->maxSize(5120)
+                                            ->columnSpanFull(),
+                                    ]),
                             ])
                             ->columns(2)
                             ->defaultItems(0)
@@ -97,14 +118,18 @@ class NavItemForm
      */
     private static function linkSuggestions(): array
     {
-        $links = collect(['/', '/about', '/about#team', '/reviews', '/faq', '/contact']);
+        $links = collect(['/', '/accommodations', '/about', '/about#team', '/reviews', '/faq', '/contact']);
 
         foreach (TourCategory::cases() as $category) {
             $links->push('/'.$category->value);
         }
 
         foreach (SafariTier::cases() as $tier) {
-            $links->push('/safaris#'.$tier->value);
+            $links->push('/safaris?tier='.$tier->value);
+        }
+
+        foreach (array_keys(\App\Models\Accommodation::locationOptions()) as $area) {
+            $links->push('/accommodations?location='.$area);
         }
 
         foreach (TourPage::published()->ordered()->get() as $page) {

@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Bookings\Tables;
 
 use App\Enums\BookingStatus;
+use App\Filament\Resources\Quotes\QuoteResource;
+use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -71,6 +73,11 @@ class BookingsTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                Action::make('createQuote')
+                    ->label('Quote')
+                    ->icon(Heroicon::OutlinedDocumentCurrencyDollar)
+                    ->color('gray')
+                    ->url(fn ($record) => QuoteResource::getUrl('create', ['booking' => $record->getKey()])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
