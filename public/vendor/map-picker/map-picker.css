@@ -1,0 +1,30 @@
+.sr-map-picker__map {
+    height: 320px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgb(0 0 0 / 0.1);
+    z-index: 0; /* keep Leaflet panes under Filament dropdowns/modals */
+}
+.dark .sr-map-picker__map { border-color: rgb(255 255 255 / 0.1); }
+.sr-map-picker__hint {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    color: rgb(107 114 128);
+}
+.dark .sr-map-picker__hint { color: rgb(156 163 175); }
+
+.sr-pin-wrap { background: none; border: 0; }
+.sr-pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    font: 600 12px/1 system-ui, sans-serif;
+    color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+.sr-pin--here { background: #344723; cursor: grab; }
+.sr-pin--other { background: #9ca3af; }
