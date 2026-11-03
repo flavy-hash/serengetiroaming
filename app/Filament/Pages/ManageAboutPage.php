@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Support\HeroImage;
 use App\Models\AboutPage;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -60,11 +61,11 @@ class ManageAboutPage extends Page
 
     public function form(Schema $schema): Schema
     {
-        $image = fn (string $name) => FileUpload::make($name)
-            ->image()
+        // Every photo on this page (banner, Our Story, team): up to 30 MB, shrunk to 2560px wide while uploading.
+        $image = fn (string $name) => HeroImage::apply(FileUpload::make($name)
             ->disk('public')
-            ->directory('about')
-            ->maxSize(5120);
+            ->directory('about'))
+            ->helperText('Up to 30 MB. Photos wider than 2560px are shrunk automatically so the page stays fast.');
 
         return $schema
             ->statePath('data')
@@ -82,7 +83,9 @@ class ManageAboutPage extends Page
                                     TextInput::make('title')->required()->maxLength(255),
                                     TextInput::make('banner_text')->maxLength(255),
                                 ]),
-                                $image('banner_image')->label('Banner image'),
+                                HeroImage::apply($image('banner_image'))
+                                    ->label('Banner image')
+                                    ->helperText(HeroImage::help('Shown in the arch at the top of the page.')),
                                 Textarea::make('meta_description')
                                     ->label('Search engine description')
                                     ->rows(2)
@@ -99,7 +102,9 @@ class ManageAboutPage extends Page
                                     ->label('Text')
                                     ->rows(8)
                                     ->helperText('Leave a blank line between paragraphs.'),
-                                $image('intro_image')->label('Image'),
+                                $image('intro_image')
+                                    ->label('Image')
+                                    ->helperText(HeroImage::help('Shown beside the story text, and in the small frame on the hero when it is set.')),
                                 Repeater::make('highlights')
                                     ->schema([
                                         TextInput::make('title')->required()->placeholder('Locally owned'),
