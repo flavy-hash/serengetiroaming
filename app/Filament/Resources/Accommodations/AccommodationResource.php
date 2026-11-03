@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Accommodations;
 
 use App\Enums\AccommodationLevel;
 use App\Filament\Resources\Accommodations\Pages\ManageAccommodations;
+use App\Filament\Support\HeroImage;
 use App\Models\Accommodation;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -55,10 +56,19 @@ class AccommodationResource extends Resource
         return $schema
             ->columns(1)
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255)
-                    ->placeholder('Serengeti Serena Safari Lodge'),
+                Grid::make(2)->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('Serengeti Serena Safari Lodge'),
+                    TextInput::make('slug')
+                        ->label('Web address')
+                        ->prefix('/accommodations/')
+                        ->maxLength(100)
+                        ->alphaDash()
+                        ->unique(ignoreRecord: true)
+                        ->helperText('Leave empty to make it from the name.'),
+                ]),
                 Grid::make(3)->schema([
                     TextInput::make('location')
                         ->label('Area')
@@ -76,16 +86,24 @@ class AccommodationResource extends Resource
                         ->placeholder('—'),
                 ]),
                 Textarea::make('description')
-                    ->rows(4)
-                    ->maxLength(2000),
-                FileUpload::make('image')
-                    ->label('Photo')
-                    ->image()
+                    ->rows(8)
+                    ->maxLength(5000)
+                    ->helperText('Shown on the stay’s own page. Leave an empty line between paragraphs. The first lines also show on the Accommodation list.'),
+                HeroImage::apply(FileUpload::make('image')
+                    ->label('Main photo')
                     ->imageEditor()
                     ->disk('public')
-                    ->directory('accommodations')
-                    ->maxSize(5120)
-                    ->helperText('Landscape photo, at least 1200px wide. Up to 5 MB.'),
+                    ->directory('accommodations'))
+                    ->helperText(HeroImage::help('Used on the list, as the banner of the stay’s page and as the first gallery photo.')),
+                HeroImage::apply(FileUpload::make('gallery')
+                    ->label('Gallery photos')
+                    ->multiple()
+                    ->reorderable()
+                    ->maxFiles(30)
+                    ->panelLayout('grid')
+                    ->disk('public')
+                    ->directory('accommodations/gallery'))
+                    ->helperText('Rooms, dining, pool, views… Up to 30 photos, 30 MB each. Drag to reorder. Visitors see them in a gallery on the stay’s page.'),
                 Toggle::make('is_published')
                     ->label('Show on website')
                     ->default(true),
@@ -128,7 +146,7 @@ class AccommodationResource extends Resource
                     ->label('View')
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                     ->color('gray')
-                    ->url(fn (Accommodation $record) => route('accommodations', ['location' => $record->location_key]), shouldOpenInNewTab: true)
+                    ->url(fn (Accommodation $record) => $record->url(), shouldOpenInNewTab: true)
                     ->visible(fn (Accommodation $record) => $record->is_published),
                 EditAction::make()
                     // FileUpload drops values that aren't files on the disk (e.g. an image URL):
