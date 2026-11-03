@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Support\InquiryNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,8 @@ class BookingController extends Controller
             'notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        Booking::create($validated);
+        // Saved for the admin, then the team is alerted (bell + email) right after this response.
+        InquiryNotifier::notify(Booking::create($validated));
 
         return response()->json([
             'message' => "Thanks! Your enquiry is in — we'll be in touch within 24 hours.",
