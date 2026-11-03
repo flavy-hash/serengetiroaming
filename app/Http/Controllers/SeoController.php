@@ -35,9 +35,20 @@ class SeoController extends Controller
             $urls->push(['loc' => route('about'), 'lastmod' => $about->updated_at, 'priority' => '0.6']);
         }
 
+        $urls->push(['loc' => route('accommodations'), 'lastmod' => $latest(\App\Models\Accommodation::published()), 'priority' => '0.7']);
+        foreach (\App\Models\Accommodation::published()->ordered()->get() as $stay) {
+            $urls->push(['loc' => $stay->url(), 'lastmod' => $stay->updated_at, 'priority' => '0.5']);
+        }
         $urls->push(['loc' => route('reviews'), 'lastmod' => $latest(Review::published()), 'priority' => '0.6']);
+        $urls->push(['loc' => route('destinations'), 'lastmod' => $latest(\App\Models\Destination::published()), 'priority' => '0.8']);
+        foreach (\App\Models\Destination::published()->ordered()->get() as $destination) {
+            $urls->push(['loc' => $destination->url(), 'lastmod' => $destination->updated_at, 'priority' => '0.7']);
+        }
+        $urls->push(['loc' => route('vehicles'), 'lastmod' => $latest(\App\Models\Vehicle::published()), 'priority' => '0.5']);
         $urls->push(['loc' => route('faq'), 'lastmod' => $latest(Faq::visible()), 'priority' => '0.6']);
         $urls->push(['loc' => route('contact'), 'lastmod' => null, 'priority' => '0.5']);
+        $urls->push(['loc' => route('policy'), 'lastmod' => null, 'priority' => '0.2']);
+        $urls->push(['loc' => route('terms'), 'lastmod' => null, 'priority' => '0.2']);
 
         $xml = view('seo.sitemap', ['urls' => $urls->unique('loc')->values()])->render();
 
