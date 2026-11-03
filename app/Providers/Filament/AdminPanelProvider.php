@@ -10,6 +10,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -34,7 +35,10 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#344723'),
                 'warning' => Color::hex('#b06e1f'),
             ])
-            ->navigationGroups(['Enquiries', 'Website Pages', 'Site Settings'])
+            ->navigationGroups(['Enquiries', 'Insights', 'Website Pages', 'Site Settings'])
+            // New enquiries and website quotes appear in the bell (sent synchronously, so no queue worker is needed).
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -54,6 +58,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            // Itinerary map picker: small Alpine component + CSS; Leaflet's JS is loaded on demand.
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): string => '<link rel="stylesheet" href="'.e(asset('vendor/leaflet/leaflet.css')).'">'
+                .'<link rel="stylesheet" href="'.e(asset('vendor/map-picker/map-picker.css')).'">'
+                .'<script>window.myMapPickerLeaflet = '.json_encode(asset('vendor/leaflet/leaflet.js')).';</script>'
+                .'<script src="'.e(asset('vendor/map-picker/map-picker.js')).'"></script>');
     }
 }
