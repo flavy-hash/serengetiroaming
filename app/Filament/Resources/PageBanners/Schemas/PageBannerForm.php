@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PageBanners\Schemas;
 
+use App\Filament\Support\HeroImage;
 use App\Models\PageBanner;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -20,16 +21,21 @@ class PageBannerForm
                 Section::make('Banner')
                     ->description('The large photo and heading at the top of the page. Leave text empty to keep the default.')
                     ->schema([
-                        FileUpload::make('image')
+                        HeroImage::apply(FileUpload::make('image')
                             ->label('Banner image')
-                            ->image()
                             ->imageEditor()
                             ->disk('public')
-                            ->directory('banners')
-                            ->maxSize(5120)
+                            ->directory('banners'))
                             ->helperText(fn (?PageBanner $record) => $default($record, 'image')
-                                ? 'Wide landscape photo, ideally 1920px wide. Leave empty to keep the current default photo.'
-                                : 'Wide landscape photo, ideally 1920px wide. Leave empty for a plain green banner.'),
+                                ? HeroImage::help('Leave empty to keep the current default photo.')
+                                : HeroImage::help('Leave empty for a plain green banner.')),
+                        FileUpload::make('video')
+                            ->label('Banner video (optional)')
+                            ->disk('public')
+                            ->directory('banners/videos')
+                            ->acceptedFileTypes(['video/mp4', 'video/webm'])
+                            ->maxSize(30720)
+                            ->helperText('A short looping clip (MP4 or WebM, up to 30 MB — under 10 MB loads fastest, no sound needed). It plays in place of the photo; the banner image above is shown while it loads and to visitors who prefer reduced motion, so add both.'),
                         TextInput::make('title')
                             ->label('Heading')
                             ->maxLength(255)

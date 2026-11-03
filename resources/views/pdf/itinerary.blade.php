@@ -26,8 +26,12 @@
 
         .price-box { background: #1d2713; color: #f6efe4; padding: 10pt 12pt; }
         .price-box .amount { font-family: 'DejaVu Serif', serif; font-size: 18pt; font-weight: bold; color: #f6efe4; }
-        .price-box td { color: #f6efe4; padding: 2pt 0; font-size: 9pt; }
         .price-box .label { color: #c89a62; }
+
+        .facts { margin-top: 10pt; border-top: 1pt solid #b06e1f; }
+        .facts td { padding: 4pt 8pt 4pt 0; font-size: 8.5pt; vertical-align: top; border-bottom: 0.5pt solid #ebe1d0; }
+        .facts td.k { width: 18%; color: #6b6b60; }
+        .facts td.v { width: 32%; font-weight: bold; color: #1d2713; }
 
         .day { margin-bottom: 10pt; border: 0.5pt solid #e2d5c1; }
         .keep { page-break-inside: avoid; }
@@ -37,7 +41,7 @@
         .day-body { padding: 8pt 9pt; }
         .day-photo { width: 52mm; vertical-align: top; padding-right: 9pt; }
         .day-photo img { width: 52mm; height: 36mm; }
-        .activity { border-left: 2pt solid #b06e1f; background: #fbf7f0; padding: 5pt 8pt; margin: 6pt 0; }
+        .activity { page-break-inside: avoid; border-left: 2pt solid #b06e1f; background: #fbf7f0; padding: 5pt 8pt; margin: 6pt 0; }
         .meta td { font-size: 8.5pt; padding-top: 4pt; border-top: 0.5pt solid #ebe1d0; }
         .chip { background: #ebe1d0; padding: 1pt 5pt; font-size: 8pt; }
 
@@ -68,7 +72,7 @@
 <footer class="page-footer">
     <table>
         <tr>
-            <td>{{ config('site.email') }} · WhatsApp +{{ config('site.whatsapp') }} · {{ preg_replace('#^https?://#', '', $page->url()) }}</td>
+            <td>{{ config('site.email') }} · WhatsApp {{ config('site.whatsapp_display') }} · {{ preg_replace('#^https?://#', '', $page->url()) }}</td>
         </tr>
     </table>
 </footer>
@@ -99,22 +103,30 @@
                         <div class="amount" style="font-size: 13pt;">Price on request</div>
                     @endif
                     @if ($page->price_note)
-                        <div style="font-size: 7.5pt; margin-bottom: 4pt;">{{ $page->price_note }}</div>
-                    @endif
-                    @if ($facts->isNotEmpty())
-                        <table style="margin-top: 4pt;">
-                            @foreach ($facts as $fact)
-                                <tr>
-                                    <td class="label">{{ $fact['label'] ?? '' }}</td>
-                                    <td style="text-align: right; font-weight: bold;">{{ $fact['value'] }}</td>
-                                </tr>
-                            @endforeach
-                        </table>
+                        <div style="font-size: 7.5pt;">{{ $page->price_note }}</div>
                     @endif
                 </div>
             </td>
         </tr>
     </table>
+
+    {{-- Trip facts and group prices: full width, two per row, so long lists never
+         push the header onto a second page. --}}
+    @if ($facts->isNotEmpty())
+        <table class="facts">
+            @foreach ($facts->values()->chunk(2) as $pair)
+                <tr>
+                    @foreach ($pair as $fact)
+                        <td class="k">{{ $fact['label'] ?? '' }}</td>
+                        <td class="v">{{ $fact['value'] }}</td>
+                    @endforeach
+                    @if ($pair->count() === 1)
+                        <td class="k"></td><td class="v"></td>
+                    @endif
+                </tr>
+            @endforeach
+        </table>
+    @endif
 
     @if ($page->overview_body)
         <h2>{{ $page->overview_heading ?: 'Package Overview' }}</h2>
@@ -155,19 +167,40 @@
                     @if (! empty($day['activity_title']))
                         <div class="activity">
                             <p class="gold" style="margin-bottom: 2pt;"><strong>Activity · {{ $day['activity_title'] }}</strong></p>
+                            @if ($activityImage = $img($day['activity_image'] ?? null))
+                                <img src="{{ $activityImage }}" alt="" style="width: 70mm; height: 40mm; margin: 2pt 0 4pt;">
+                            @endif
                             @if (! empty($day['activity_copy']))
                                 <p style="margin: 0;">{{ $day['activity_copy'] }}</p>
                             @endif
                         </div>
                     @endif
 
-                    @if (! empty($day['options']))
-                        <p style="margin: 6pt 0 2pt;"><strong>Options based on your package:</strong></p>
-                        <ul class="list">
-                            @foreach ($day['options'] as $option)
-                                <li><strong>{{ $option['tier'] ?? '' }}</strong> — <span class="gold">{{ $option['label'] ?? '' }}</span></li>
-                            @endforeach
-                        </ul>
+                    {{-- Stay photo (same field as the website's "Options based on your package" picture). --}}
+                    @php($stayImage = $img($day['image'] ?? null))
+                    @if (! empty($day['options']) || $stayImage)
+                        <table style="margin-top: 6pt;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    @if (! empty($day['options']))
+                                        <p style="margin: 0 0 2pt;"><strong>Options based on your package:</strong></p>
+                                        <ul class="list">
+                                            @foreach ($day['options'] as $option)
+                                                <li><strong>{{ $option['tier'] ?? '' }}</strong> — <span class="gold">{{ $option['label'] ?? '' }}</span></li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </td>
+                                @if ($stayImage)
+                                    <td class="day-photo" style="padding: 0 0 0 9pt; text-align: right;">
+                                        <img src="{{ $stayImage }}" alt="">
+                                        @if (! empty($day['image_caption']))
+                                            <div style="font-size: 7.5pt; color: #6b6b60; margin-top: 2pt;">{{ $day['image_caption'] }}</div>
+                                        @endif
+                                    </td>
+                                @endif
+                            </tr>
+                        </table>
                     @endif
 
                     @if (! empty($day['meal_plan']) || ! empty($day['accommodation']))
@@ -213,7 +246,7 @@
         <h3>Ready to book or tailor this trip?</h3>
         <p style="margin: 4pt 0 0;">
             Every itinerary can be adjusted to your dates, budget and interests. No payment is taken until we confirm availability.<br>
-            Email <strong>{{ config('site.email') }}</strong> · WhatsApp <strong>+{{ config('site.whatsapp') }}</strong><br>
+            Email <strong>{{ config('site.email') }}</strong> · WhatsApp <strong>{{ config('site.whatsapp_display') }}</strong><br>
             View online: <span class="gold">{{ $page->url() }}</span>
         </p>
     </div>

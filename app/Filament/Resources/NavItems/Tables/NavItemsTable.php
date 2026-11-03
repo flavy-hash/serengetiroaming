@@ -21,7 +21,7 @@ class NavItemsTable
             ->columns([
                 ImageColumn::make('image')
                     ->label('')
-                    ->disk('public')
+                    ->state(fn (NavItem $record) => $record->imageUrl())
                     ->imageHeight(40)
                     ->square(),
                 TextColumn::make('label')

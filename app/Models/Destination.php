@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\NavPreview;
 use App\Support\RouteMap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -37,6 +38,13 @@ class Destination extends Model
         'places' => 'array',
         'is_published' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        // The Destinations menu shows each destination's photo and line: refresh it when they change.
+        static::saved(fn () => NavPreview::flush());
+        static::deleted(fn () => NavPreview::flush());
+    }
 
     public function getRouteKeyName(): string
     {

@@ -18,6 +18,11 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    // Optional: nicer map tiles on package route maps (OpenStreetMap is used without it).
+    'mapbox' => [
+        'token' => env('MAPBOX_TOKEN'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

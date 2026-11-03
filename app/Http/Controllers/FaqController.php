@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Faq;
 use App\Models\TourPage;
+use App\Support\InquiryNotifier;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class FaqController extends Controller
 
         $validated['tour_page_id'] = TourPage::published()->whereKey($validated['tour_page_id'] ?? null)->value('id');
 
-        Faq::create($validated);
+        InquiryNotifier::notify(Faq::create($validated));
 
         return response()->json([
             'message' => "Thanks! We'll email you an answer within 24 hours — useful answers are also added to our FAQ.",

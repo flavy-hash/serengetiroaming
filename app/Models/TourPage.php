@@ -20,6 +20,7 @@ class TourPage extends Model
         'seo_title',
         'meta_description',
         'banner_image',
+        'banner_video',
         'banner_badge',
         'banner_text',
         'location',
@@ -51,6 +52,13 @@ class TourPage extends Model
         'excluded' => 'array',
         'experiences' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        // Menu previews are built from packages (photo, name, summary).
+        static::saved(fn () => \App\Support\NavPreview::flush());
+        static::deleted(fn () => \App\Support\NavPreview::flush());
+    }
 
     public function scopePublished(Builder $query): void
     {
@@ -153,6 +161,14 @@ class TourPage extends Model
     /**
      * Uploaded images are stored on the public disk; full URLs are passed through.
      */
+    /**
+     * The looping banner video, if one was attached (the banner image is its poster).
+     */
+    public function bannerVideoUrl(): ?string
+    {
+        return self::imageUrl($this->banner_video);
+    }
+
     public static function imageUrl(?string $path): ?string
     {
         if (blank($path)) {

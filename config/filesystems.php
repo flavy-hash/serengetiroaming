@@ -41,7 +41,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            // Relative on purpose: photos load from whichever address the site is opened on, so a wrong or http:// APP_URL can't break them.
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

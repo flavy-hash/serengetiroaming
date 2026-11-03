@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
 use App\Models\Faq;
+use App\Support\InquiryNotifier;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class ContactController extends Controller
             'website' => ['prohibited'], // honeypot: hidden from people, filled in by bots
         ]);
 
-        ContactMessage::create($validated);
+        InquiryNotifier::notify(ContactMessage::create($validated));
 
         return response()->json([
             'message' => "Thanks for getting in touch — we'll reply within 24 hours.",
