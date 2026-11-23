@@ -1,12 +1,5 @@
 @php
-    $languages = [
-        ['code' => 'en', 'label' => 'English'],
-        ['code' => 'zh-CN', 'label' => '中文'],
-        ['code' => 'fr', 'label' => 'Français'],
-        ['code' => 'it', 'label' => 'Italiano'],
-        ['code' => 'es', 'label' => 'Español'],
-        ['code' => 'ar', 'label' => 'العربية'],
-    ];
+    $languages = config('site.languages', []);
 @endphp
 
 <div class="lang-fab notranslate" data-lang-fab>
