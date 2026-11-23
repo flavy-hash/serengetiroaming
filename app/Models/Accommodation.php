@@ -20,19 +20,44 @@ class Accommodation extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'location',
         'type',
         'level',
         'description',
         'image',
+        'gallery',
         'is_published',
         'sort_order',
     ];
 
     protected $casts = [
         'level' => AccommodationLevel::class,
+        'gallery' => 'array',
         'is_published' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        // A stay always has a web address: made from its name unless the admin typed one.
+        static::saving(function (Accommodation $stay) {
+            if (blank($stay->slug)) {
+                $stay->slug = static::uniqueSlug((string) $stay->name, $stay->getKey());
+            }
+        });
+    }
+
+    public static function uniqueSlug(string $name, mixed $ignoreId = null): string
+    {
+        $base = Str::slug($name) ?: 'stay';
+        $slug = $base;
+
+        for ($i = 2; static::query()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists(); $i++) {
+            $slug = "{$base}-{$i}";
+        }
+
+        return $slug;
+    }
 
     public function scopePublished(Builder $query): void
     {
@@ -55,6 +80,40 @@ class Accommodation extends Model
     public function imageUrl(): ?string
     {
         return TourPage::imageUrl($this->image);
+    }
+
+    /**
+     * This stay's own page, with its description and photo gallery.
+     */
+    public function url(): string
+    {
+        return route('accommodations.show', $this->slug);
+    }
+
+    /**
+     * Every photo of the stay, main photo first: [url, …].
+     *
+     * @return array<int, string>
+     */
+    public function photoUrls(): array
+    {
+        return collect([$this->image, ...(array) $this->gallery])
+            ->filter()
+            ->unique()
+            ->map(fn ($path) => TourPage::imageUrl($path))
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * The description split into paragraphs (blank line between them).
+     *
+     * @return array<int, string>
+     */
+    public function paragraphs(): array
+    {
+        return array_values(array_filter(array_map('trim', preg_split('/\R{2,}/', (string) $this->description) ?: [])));
     }
 
     /**

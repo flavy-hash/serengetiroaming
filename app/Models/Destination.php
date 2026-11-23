@@ -18,6 +18,9 @@ class Destination extends Model
     /** Suggestions in the admin; admins can type their own. */
     public const REGIONS = ['Northern Circuit', 'Southern Circuit', 'Kilimanjaro', 'Zanzibar & Islands'];
 
+    /** The region listed on /explore-zanzibar. */
+    public const ZANZIBAR_REGION = 'Zanzibar & Islands';
+
     protected $fillable = [
         'name',
         'slug',
@@ -25,6 +28,7 @@ class Destination extends Model
         'tagline',
         'description',
         'highlights',
+        'activities',
         'best_time',
         'places',
         'image',

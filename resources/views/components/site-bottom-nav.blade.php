@@ -29,12 +29,12 @@
     aria-label="Bottom"
 >
     <div class="mx-auto grid max-w-md grid-cols-5 items-end px-1 pb-[env(safe-area-inset-bottom)]">
-        <a href="{{ $tabs[0]['href'] }}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium {{ $tabs[0]['active'] ? 'text-forest-800' : 'text-charcoal-500' }}">
+        <a href="{{ $tabs[0]['href'] }}" class="flex flex-col items-center gap-1 py-2.5 text-[0.6875rem] font-medium {{ $tabs[0]['active'] ? 'text-forest-800' : 'text-charcoal-500' }}">
             <svg viewBox="0 0 24 24" class="h-5.5 w-5.5">{!! $tabs[0]['icon'] !!}</svg>
             {{ $tabs[0]['label'] }}
         </a>
 
-        <a href="{{ $tabs[1]['href'] }}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium {{ $tabs[1]['active'] ? 'text-forest-800' : 'text-charcoal-500' }}">
+        <a href="{{ $tabs[1]['href'] }}" class="flex flex-col items-center gap-1 py-2.5 text-[0.6875rem] font-medium {{ $tabs[1]['active'] ? 'text-forest-800' : 'text-charcoal-500' }}">
             <svg viewBox="0 0 24 24" class="h-5.5 w-5.5">{!! $tabs[1]['icon'] !!}</svg>
             {{ $tabs[1]['label'] }}
         </a>
@@ -52,18 +52,20 @@
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.416 1.27 4.849L2 21.997l5.29-1.253a9.96 9.96 0 0 0 4.714 1.2h.004c5.513 0 9.996-4.483 9.996-9.997 0-2.672-1.04-5.184-2.928-7.073a9.93 9.93 0 0 0-7.072-2.871Zm5.883 15.876a8.28 8.28 0 0 1-5.883 2.438h-.003a8.29 8.29 0 0 1-4.226-1.156l-.303-.18-3.14.744.751-3.06-.198-.314a8.3 8.3 0 0 1-1.28-4.451c0-4.588 3.734-8.322 8.326-8.322a8.27 8.27 0 0 1 5.884 2.442 8.26 8.26 0 0 1 2.435 5.88 8.29 8.29 0 0 1-2.363 5.98Z" />
                 </svg>
             </a>
-            <span class="mt-1 text-[11px] font-medium text-gold-600">WhatsApp</span>
+            <span class="mt-1 text-[0.6875rem] font-medium text-gold-600">WhatsApp</span>
         </div>
 
-        <a href="{{ $callTab['href'] }}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-charcoal-500">
+        <a href="{{ $callTab['href'] }}" class="flex flex-col items-center gap-1 py-2.5 text-[0.6875rem] font-medium text-charcoal-500">
             <svg viewBox="0 0 24 24" class="h-5.5 w-5.5">{!! $callTab['icon'] !!}</svg>
             {{ $callTab['label'] }}
         </a>
 
         <button
             type="button"
-            data-menu-toggle-alias
-            class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-charcoal-500"
+            data-mobile-menu-open
+            aria-expanded="false"
+            aria-controls="mobileMenu"
+            class="flex flex-col items-center gap-1 py-2.5 text-[0.6875rem] font-medium text-charcoal-500"
         >
             <svg viewBox="0 0 24 24" fill="none" class="h-5.5 w-5.5">
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />

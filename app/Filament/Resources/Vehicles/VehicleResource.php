@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Vehicles;
 
 use App\Filament\Resources\Vehicles\Pages\ManageVehicles;
+use App\Filament\Support\HeroImage;
 use App\Models\Vehicle;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -79,14 +80,12 @@ class VehicleResource extends Resource
                     ->reorderable()
                     ->addActionLabel('Add feature')
                     ->helperText('Shown as a checklist on the vehicle card.'),
-                FileUpload::make('image')
+                HeroImage::apply(FileUpload::make('image')
                     ->label('Photo')
-                    ->image()
                     ->imageEditor()
                     ->disk('public')
-                    ->directory('vehicles')
-                    ->maxSize(5120)
-                    ->helperText('Landscape photo, at least 1200px wide. Up to 5 MB.'),
+                    ->directory('vehicles'))
+                    ->helperText(HeroImage::help('Shown on the Vehicles page and in the homepage fleet strip.')),
                 Toggle::make('is_published')
                     ->label('Show on website')
                     ->default(true),

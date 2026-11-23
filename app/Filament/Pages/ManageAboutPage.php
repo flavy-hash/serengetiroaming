@@ -85,7 +85,7 @@ class ManageAboutPage extends Page
                                 ]),
                                 HeroImage::apply($image('banner_image'))
                                     ->label('Banner image')
-                                    ->helperText(HeroImage::help('Shown in the arch at the top of the page.')),
+                                    ->helperText(HeroImage::help('The photo behind the title at the top of the page.')),
                                 Textarea::make('meta_description')
                                     ->label('Search engine description')
                                     ->rows(2)
@@ -94,43 +94,111 @@ class ManageAboutPage extends Page
                         Tab::make('Our Story')
                             ->icon(Heroicon::OutlinedBookOpen)
                             ->schema([
+                                $image('intro_image')
+                                    ->label('Photo')
+                                    ->helperText(HeroImage::help('The framed photo under the banner.')),
                                 TextInput::make('intro_heading')
                                     ->label('Heading')
-                                    ->placeholder('We are Serengeti Roaming')
+                                    ->placeholder('Who Are We?')
                                     ->maxLength(255),
                                 Textarea::make('intro_body')
                                     ->label('Text')
                                     ->rows(8)
                                     ->helperText('Leave a blank line between paragraphs.'),
-                                $image('intro_image')
-                                    ->label('Image')
-                                    ->helperText(HeroImage::help('Shown beside the story text, and in the small frame on the hero when it is set.')),
+                                Textarea::make('mission')
+                                    ->label('Our Mission (optional)')
+                                    ->rows(4),
+                                Textarea::make('vision')
+                                    ->label('Our Vision (optional)')
+                                    ->rows(4),
+                            ]),
+                        Tab::make('Why Choose Us')
+                            ->icon(Heroicon::OutlinedHeart)
+                            ->schema([
+                                TextInput::make('why_heading')
+                                    ->label('Heading')
+                                    ->placeholder('Why Travel With Us?')
+                                    ->maxLength(255),
+                                Textarea::make('why_intro')
+                                    ->label('Text above the list')
+                                    ->rows(5)
+                                    ->helperText('Leave a blank line between paragraphs.'),
                                 Repeater::make('highlights')
+                                    ->label('The list')
+                                    ->itemLabel(fn (array $state) => $state['title'] ?? null)
                                     ->schema([
-                                        TextInput::make('title')->required()->placeholder('Locally owned'),
+                                        TextInput::make('title')->required()->placeholder('Personalized Safari Experiences'),
                                         Textarea::make('copy')->rows(2),
                                     ])
-                                    ->grid(3)
+                                    ->collapsible()
                                     ->defaultItems(0)
-                                    ->addActionLabel('Add highlight'),
+                                    ->addActionLabel('Add a point'),
+                                Textarea::make('closing_text')
+                                    ->label('Closing text (optional)')
+                                    ->rows(4)
+                                    ->helperText('Shown under the list.'),
+                            ]),
+                        Tab::make('Community')
+                            ->icon(Heroicon::OutlinedHomeModern)
+                            ->schema([
+                                TextInput::make('community_heading')
+                                    ->label('Heading')
+                                    ->placeholder('Supporting Local Communities')
+                                    ->maxLength(255),
+                                Textarea::make('community_text')
+                                    ->label('Text')
+                                    ->rows(8)
+                                    ->helperText('Shown on the home page under "Why choose us" and on the About page. Leave a blank line between paragraphs.'),
+                                $image('community_image')
+                                    ->label('Photo')
+                                    ->helperText(HeroImage::help('Shown beside the text on the home page. A photo of local people, crafts or a village visit works well. Until you upload one, a Maasai community photo is used.')),
                             ]),
                         Tab::make('Team')
                             ->icon(Heroicon::OutlinedUsers)
-                            ->badge(fn () => count($this->data['team'] ?? []) ?: null)
+                            ->badge(fn () => count($this->data['team_groups'] ?? []) ?: null)
                             ->schema([
-                                Repeater::make('team')
-                                    ->hiddenLabel()
-                                    ->itemLabel(fn (array $state) => $state['name'] ?? null)
+                                Grid::make(2)->schema([
+                                    TextInput::make('team_title')
+                                        ->label('Banner title')
+                                        ->placeholder('Meet Our Experts’ Team')
+                                        ->maxLength(255),
+                                    TextInput::make('team_heading')
+                                        ->label('Heading')
+                                        ->placeholder('Meet Our Professional Team')
+                                        ->maxLength(255),
+                                ]),
+                                HeroImage::apply($image('team_banner_image'))
+                                    ->label('Banner image')
+                                    ->helperText(HeroImage::help('The photo behind the title on the Our Team page.')),
+                                Textarea::make('team_intro')
+                                    ->label('Introduction')
+                                    ->rows(4)
+                                    ->helperText('Shown under the heading. Leave a blank line between paragraphs.'),
+                                Repeater::make('team_groups')
+                                    ->label('Groups')
+                                    ->itemLabel(fn (array $state) => filled($state['title'] ?? null) ? $state['title'] : 'Leadership (no heading)')
                                     ->schema([
-                                        TextInput::make('name')->required(),
-                                        TextInput::make('role')->placeholder('Head Guide'),
-                                        $image('photo'),
-                                        Textarea::make('bio')->rows(3),
+                                        TextInput::make('title')
+                                            ->placeholder('Our Sales Team')
+                                            ->helperText('Leave empty for the first group (the managing director) to show it straight under the introduction.'),
+                                        Textarea::make('description')->rows(3),
+                                        Repeater::make('members')
+                                            ->itemLabel(fn (array $state) => $state['name'] ?? null)
+                                            ->schema([
+                                                TextInput::make('name')->required(),
+                                                TextInput::make('role')->placeholder('Head Guide'),
+                                                $image('photo'),
+                                                Textarea::make('bio')->rows(3),
+                                                TextInput::make('link')->label('Link (LinkedIn, etc.)')->url()->maxLength(255),
+                                            ])
+                                            ->grid(2)
+                                            ->collapsible()
+                                            ->defaultItems(0)
+                                            ->addActionLabel('Add person'),
                                     ])
-                                    ->grid(2)
                                     ->collapsible()
                                     ->defaultItems(0)
-                                    ->addActionLabel('Add team member'),
+                                    ->addActionLabel('Add group'),
                             ]),
                         Tab::make('Reviews')
                             ->icon(Heroicon::OutlinedStar)

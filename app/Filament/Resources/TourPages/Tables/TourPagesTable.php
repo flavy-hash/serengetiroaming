@@ -30,7 +30,8 @@ class TourPagesTable
             ->columns([
                 ImageColumn::make('banner_image')
                     ->label('')
-                    ->disk('public')
+                    // Built from the website's own address (like the other admin lists), not APP_URL.
+                    ->state(fn (\App\Models\TourPage $record) => \App\Models\TourPage::imageUrl($record->banner_image))
                     ->imageHeight(48)
                     ->square(),
                 TextColumn::make('title')

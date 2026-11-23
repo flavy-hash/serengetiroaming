@@ -58,7 +58,7 @@
     <div class="mx-auto grid max-w-6xl gap-12 px-4 lg:grid-cols-[1fr_20rem] lg:items-start lg:px-8">
     <div>
         <div class="text-center lg:text-left">
-            <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-600">
+            <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">
                 {{ collect([$page->package_name, $page->duration])->filter()->implode(' · ') }}
             </p>
             <h2 class="mt-3 font-display text-3xl font-semibold text-forest-900 lg:text-4xl">
@@ -247,7 +247,7 @@
 
     </div>
 
-    <aside class="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)]">
+    <aside class="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
         <div class="rounded-2xl bg-forest-900 p-7 text-cream-50">
             @if ($page->price_from)
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gold-300">From</p>

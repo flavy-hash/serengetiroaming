@@ -8,6 +8,9 @@ use App\Models\Faq;
 use App\Models\Review;
 use App\Models\TourPage;
 use App\Support\ItineraryPdf;
+use App\Support\ListingFilters;
+use App\Support\RouteMap;
+use Illuminate\Support\Str;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
 
@@ -78,13 +81,52 @@ class TourPageController extends Controller
             ->sortBy(fn (TourPage $page) => array_search($page->category, $sections, true))
             ->values();
 
-        $filters = [
-            'sections' => collect($sections)->filter(fn (TourCategory $c) => $pages->contains('category', $c))->values(),
-            'tiers' => SafariTier::cases(),
-            'days' => $pages->map->days()->filter()->unique()->sort()->values(),
+        // Filter options (key => label), built from what is actually on offer.
+        $options = [
+            'section' => collect($sections)->filter(fn (TourCategory $c) => $pages->contains('category', $c))
+                ->mapWithKeys(fn (TourCategory $c) => [$c->value => $c->getLabel()])->all(),
+            'tier' => collect(SafariTier::cases())->mapWithKeys(fn (SafariTier $t) => [$t->value => $t->getLabel()])->all(),
+            'days' => $pages->map->days()->filter()->unique()->sort()
+                ->mapWithKeys(fn (int $d) => [(string) $d => $d.' '.Str::plural('day', $d)])->all(),
         ];
 
-        return view('pages.safaris', compact('pages', 'filters'));
+        // ?tier=luxury&section=kilimanjaro&days=7 — unknown values are ignored.
+        $active = collect($options)
+            ->map(fn (array $opts, string $param) => ListingFilters::activeFilter(request()->query($param), $opts))
+            ->all();
+        $keep = ['category' => TourCategory::Safaris->value, ...array_filter($active)];
+
+        $chips = [
+            'section' => ListingFilters::filterLinks('tours.index', 'section', $options['section'], $active['section'], 'All', $keep),
+            'tier' => ListingFilters::filterLinks('tours.index', 'tier', $options['tier'], $active['tier'], 'All', $keep),
+            'days' => ListingFilters::filterLinks('tours.index', 'days', $options['days'], $active['days'], 'Any', $keep),
+        ];
+
+        $matches = fn (TourPage $p) => (! $active['section'] || $p->category->value === $active['section'])
+            && (! $active['tier'] || $p->tier?->value === $active['tier'])
+            && (! $active['days'] || (string) $p->days() === $active['days']);
+
+        $heading = self::listingHeading($active);
+
+        return view('pages.safaris', compact('pages', 'options', 'active', 'chips', 'matches', 'heading'));
+    }
+
+    /**
+     * "Luxury Kilimanjaro Packages · 8 days" for the active filters, or null when unfiltered.
+     *
+     * @param  array<string, ?string>  $active
+     */
+    public static function listingHeading(array $active): ?string
+    {
+        if (! array_filter($active)) {
+            return null;
+        }
+
+        $tier = $active['tier'] ? SafariTier::from($active['tier'])->getLabel().' ' : '';
+        $section = $active['section'] ? TourCategory::from($active['section'])->getPackagesHeading() : 'Safaris & Tours';
+        $days = $active['days'] ? ' · '.$active['days'].' days' : '';
+
+        return $tier.$section.$days;
     }
 
     private function render(TourPage $page): View
@@ -100,7 +142,13 @@ class TourPageController extends Controller
         $reviews = Review::published()->where('tour_page_id', $page->getKey())->showcase()->limit(6)->get();
         $reviewStats = Review::published()->where('tour_page_id', $page->getKey())->selectRaw('count(*) as total, avg(rating) as average')->first();
 
-        return view('pages.tour', compact('page', 'others', 'faqs', 'reviews', 'reviewStats'));
+        // Route map: only worth showing with at least two stops.
+        $stops = RouteMap::stops($page->itinerary);
+        $routeStops = count($stops) >= 2 ? $stops : [];
+
+        request()->attributes->set('viewed_package_id', $page->getKey());
+
+        return view('pages.tour', compact('page', 'others', 'faqs', 'reviews', 'reviewStats', 'routeStops'));
     }
 
     /**

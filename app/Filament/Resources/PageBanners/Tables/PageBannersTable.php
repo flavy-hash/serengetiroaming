@@ -44,6 +44,11 @@ class PageBannersTable
                         'Default photo' => 'info',
                         default => 'gray',
                     }),
+                TextColumn::make('video_status')
+                    ->label('Video')
+                    ->state(fn (PageBanner $record) => filled($record->video) ? 'Video attached' : '—')
+                    ->badge()
+                    ->color(fn (string $state) => $state === 'Video attached' ? 'success' : 'gray'),
             ])
             ->recordActions([
                 Action::make('viewOnSite')

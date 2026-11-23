@@ -28,12 +28,12 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
             <span>Arusha, Tanzania · Locally owned</span>
         </div>
-        <h1 class="hero__title">Discover Wild Tanzania</h1>
-        <p class="hero__tagline">Serengeti safaris, Kilimanjaro climbs and Zanzibar beaches guided by the people who live here.</p>
+        <h1 class="hero__title">Discover the Magic of Tanzania with Local Safari Experts</h1>
+        <p class="hero__tagline">Our promise is simple: your adventure, your expectations, and your unforgettable memories are our priority.</p>
 
         <div class="hero__actions">
-            <a class="btn btn--primary" href="{{ url('/safaris') }}">Plan My Trip</a>
-            <a class="btn btn--ghost" href="{{ url('/contact') }}">Check availability</a>
+            <a class="btn btn--primary" href="{{ url('/safaris') }}">Explore Safaris</a>
+            <a class="btn btn--ghost" href="{{ url('/contact') }}#contact-form">Plan Your Safari</a>
             <button class="btn-film" type="button" id="filmOpen">
                 <span class="btn-film__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" /></svg></span>
                 Watch the film
@@ -53,7 +53,7 @@
 </dialog>
 
 <section class="mx-auto max-w-4xl px-4 py-20 text-center lg:px-8">
-    <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-600">Who We Are</p>
+    <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">Who We Are</p>
     <h2 class="mt-3 font-display text-3xl font-semibold text-forest-900 lg:text-4xl">
         A Tanzanian-owned safari company, built by the people who guide it
     </h2>
@@ -75,7 +75,7 @@
 
 <section class="bg-forest-900 py-20">
     <div class="mx-auto max-w-6xl px-4 text-center lg:px-8">
-        <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-300">Why Choose Us</p>
+        <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-300">Why Choose Us</p>
         <h2 class="mt-3 font-display text-3xl font-semibold text-cream-50 lg:text-4xl">
             The details that make a safari go right
         </h2>
@@ -115,9 +115,34 @@
     </div>
 </section>
 
+<?php $community = \App\Models\AboutPage::community(); ?>
+<section class="community" aria-labelledby="communityTitle">
+    <div class="community__inner">
+        <figure class="community__photo">
+            <img src="{{ $community['image'] }}" alt="{{ $community['heading'] }}" loading="lazy" decoding="async">
+        </figure>
+
+        <div class="community__body">
+            <div class="community__eyebrow">
+                <span class="community__icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2Z" /></svg>
+                </span>
+                <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">Giving Back</p>
+            </div>
+            <h2 class="about-heading" id="communityTitle">{{ $community['heading'] }}</h2>
+            <div class="community__text">
+                @foreach ($community['paragraphs'] as $paragraph)
+                    <p>{{ $paragraph }}</p>
+                @endforeach
+            </div>
+            <a class="btn btn--dark" href="{{ route('about') }}">Learn more about us</a>
+        </div>
+    </div>
+</section>
+
 <section class="mx-auto max-w-7xl px-4 py-20 lg:px-8">
     <div class="text-center">
-        <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-600">Featured Packages</p>
+        <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">Featured Packages</p>
         <h2 class="mt-3 font-display text-3xl font-semibold text-forest-900 lg:text-4xl">
             Popular packages to start planning
         </h2>
@@ -216,20 +241,31 @@
     </div>
 </section>
 
-<section class="mx-auto max-w-6xl px-4 py-20 text-center lg:px-8">
-    <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-600">Reviews</p>
+<section class="mx-auto max-w-7xl px-4 py-20 text-center lg:px-8">
+    <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">Reviews</p>
     <h2 class="mt-3 font-display text-3xl font-semibold text-forest-900 lg:text-4xl">
         What travelers are saying
     </h2>
 
-    @php($homepageReviews = \App\Models\Review::forHomepage())
+    @php($homepageReviews = \App\Models\Review::forHomepage(9))
 
     @if ($homepageReviews->isNotEmpty())
-        {{-- Published reviews (featured first), managed in the admin under Reviews. --}}
-        <div class="mx-auto mt-10 grid gap-6 text-left {{ $homepageReviews->count() >= 3 ? 'max-w-6xl sm:grid-cols-2 lg:grid-cols-3' : 'max-w-3xl sm:grid-cols-2' }}">
-            @foreach ($homepageReviews as $review)
-                <x-review-card :review="$review" />
-            @endforeach
+        {{-- Published reviews (featured first), managed in the admin under Reviews. A sideways carousel:
+             large cards, the next one peeking in, arrows to move along. --}}
+        <div class="review-carousel" data-carousel>
+            <div class="review-carousel__track" data-carousel-track tabindex="0" role="region" aria-label="Guest reviews">
+                @foreach ($homepageReviews as $review)
+                    <div class="review-carousel__slide" data-carousel-slide>
+                        <x-review-card :review="$review" />
+                    </div>
+                @endforeach
+            </div>
+            <button type="button" class="review-carousel__arrow review-carousel__arrow--prev" data-carousel-prev aria-label="Previous reviews" hidden>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+            </button>
+            <button type="button" class="review-carousel__arrow review-carousel__arrow--next" data-carousel-next aria-label="Next reviews" hidden>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </button>
         </div>
     @else
         <x-review-placeholders />
@@ -257,7 +293,7 @@
     <section id="activities" class="scroll-mt-24 bg-cream-100/60 py-20" aria-labelledby="activities-heading">
         <div class="mx-auto max-w-6xl px-4 lg:px-8">
             <div class="mx-auto max-w-2xl text-center">
-                <p class="flex items-center justify-center gap-4 font-display text-sm uppercase tracking-[0.3em] text-gold-600">
+                <p class="flex items-center justify-center gap-4 font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">
                     <span class="h-px w-10 bg-gold-500/50" aria-hidden="true"></span>
                     {{ $activityText['eyebrow'] }}
                     <span class="h-px w-10 bg-gold-500/50" aria-hidden="true"></span>
@@ -314,7 +350,7 @@
     <section id="fleet" class="scroll-mt-24 overflow-hidden py-20" aria-labelledby="fleet-heading">
         <div class="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-4 px-4 lg:px-8">
             <div>
-                <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-600">Our Fleet</p>
+                <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">Our Fleet</p>
                 <h2 id="fleet-heading" class="mt-3 font-display text-3xl font-semibold text-forest-900 lg:text-4xl">Travel in comfort, wherever you go</h2>
             </div>
             <a href="{{ route('vehicles') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-gold-600 transition hover:gap-3 hover:text-gold-500">
@@ -349,22 +385,38 @@
     </section>
 @endif
 
-<section class="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-    <h2 class="font-display text-2xl font-semibold text-forest-900">Explore by destination</h2>
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        @foreach ([
-            ['title' => 'Safaris', 'href' => '/safaris', 'copy' => 'Budget to luxury game drives across the Serengeti.'],
-            ['title' => 'Southern Circuit', 'href' => '/southern-circuit', 'copy' => 'Ruaha, Nyerere & Selous, Mikumi and Udzungwa.'],
-            ['title' => 'Kilimanjaro', 'href' => '/kilimanjaro', 'copy' => 'Machame, Lemosho, Marangu and day hikes.'],
-            ['title' => 'Zanzibar', 'href' => '/zanzibar', 'copy' => 'Beach holidays, Stone Town and spice tours.'],
-        ] as $card)
-            <a href="{{ url($card['href']) }}" class="group rounded-2xl border border-forest-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                <h3 class="font-display text-lg font-semibold text-forest-900 group-hover:text-gold-600">
-                    {{ $card['title'] }}
-                </h3>
-                <p class="mt-2 text-sm text-charcoal-600">{{ $card['copy'] }}</p>
-            </a>
-        @endforeach
+{{-- Same look as "Why Choose Us" on the About page: a dark band of numbered cards (each card is a link). --}}
+<section class="why-us why-us--explore" aria-labelledby="exploreTitle">
+    <div class="why-us__inner">
+        <h2 class="why-us__title" id="exploreTitle">Explore by destination</h2>
+        <p class="why-us__lead">Pick where your Tanzania adventure begins.</p>
+
+        <ul class="why-us__grid">
+            @foreach ([
+                ['title' => 'Safaris', 'href' => '/safaris', 'copy' => 'Budget to luxury game drives across the Serengeti.'],
+                ['title' => 'Southern Circuit', 'href' => '/southern-circuit', 'copy' => 'Ruaha, Nyerere & Selous, Mikumi and Udzungwa.'],
+                ['title' => 'Kilimanjaro', 'href' => '/kilimanjaro', 'copy' => 'Machame, Lemosho, Marangu and day hikes.'],
+                ['title' => 'Zanzibar', 'href' => '/zanzibar', 'copy' => 'Beach holidays, Stone Town and spice tours.'],
+            ] as $i => $card)
+                <li class="why-card">
+                    <span class="why-card__num" aria-hidden="true">{{ str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) }}</span>
+                    <h3 class="why-card__title"><a class="why-card__link" href="{{ url($card['href']) }}">{{ $card['title'] }}</a></h3>
+                    <p class="why-card__copy">{{ $card['copy'] }}</p>
+                    <span class="why-card__more" aria-hidden="true">Explore →</span>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+</section>
+
+<section class="home-cta" aria-labelledby="home-cta-title">
+    <div class="home-cta__inner">
+        <h2 class="home-cta__title" id="home-cta-title">Ready to plan your Tanzania safari?</h2>
+        <p class="home-cta__text">Tell us what you dream of and our local experts will build the trip around you.</p>
+        <div class="home-cta__actions">
+            <a class="btn btn--primary" href="{{ url('/safaris') }}">Explore Safaris</a>
+            <a class="btn btn--ghost" href="{{ url('/contact') }}#contact-form">Plan Your Safari</a>
+        </div>
     </div>
 </section>
 @endsection

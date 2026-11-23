@@ -30,7 +30,7 @@ return new class extends Migration
             return;
         }
 
-        $after = collect($links)->search(fn ($l) => ($l['href'] ?? null) === '/about#team');
+        $after = collect($links)->search(fn ($l) => in_array($l['href'] ?? null, ['/about#team', '/our-team'], true));
         $position = $after === false ? count($links) : $after + 1;
         array_splice($links, $position, 0, [self::LINK]);
 

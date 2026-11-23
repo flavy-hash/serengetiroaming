@@ -318,7 +318,7 @@ class WebsitePagesTest extends TestCase
                 'is_published' => true,
                 'title' => 'About Us',
                 'intro_heading' => 'We are Serengeti Roaming',
-                'team' => [['name' => 'Asha', 'role' => 'Head Guide']],
+                'team_groups' => [['title' => 'Our Guides', 'members' => [['name' => 'Asha', 'role' => 'Head Guide']]]],
                 'faqs' => [['question' => 'Do I need a visa?', 'answer' => 'Most visitors do.']],
             ])
             ->call('save')
@@ -330,7 +330,8 @@ class WebsitePagesTest extends TestCase
         $this->get('/about')
             ->assertOk()
             ->assertSee('We are Serengeti Roaming')
-            ->assertSee('Head Guide')
             ->assertSee('Do I need a visa?');
+
+        $this->get('/our-team')->assertOk()->assertSee('Our Guides')->assertSee('Asha')->assertSee('Head Guide');
     }
 }

@@ -1,6 +1,7 @@
 @php
     $exploreLinks = [
         ['label' => 'Safaris', 'href' => '/safaris'],
+        ['label' => 'Northern Circuit', 'href' => '/northern-circuit'],
         ['label' => 'Southern Circuit', 'href' => '/southern-circuit'],
         ['label' => 'Kilimanjaro', 'href' => '/kilimanjaro'],
         ['label' => 'Zanzibar', 'href' => '/zanzibar'],
@@ -9,7 +10,7 @@
 
     $companyLinks = [
         ['label' => 'About Us', 'href' => '/about'],
-        ['label' => 'Our Team', 'href' => '/about#team'],
+        ['label' => 'Our Team', 'href' => '/our-team'],
         ['label' => 'Reviews', 'href' => '/reviews'],
         ['label' => 'FAQ', 'href' => '/faq'],
         ['label' => 'Contact', 'href' => '/contact'],
@@ -18,16 +19,12 @@
     // Contact details live in config/site.php.
     $whatsappNumber = config('site.whatsapp');
     $email = config('site.email');
-
-    $socials = [
-        ['label' => 'Instagram', 'href' => '#', 'icon' => '<rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6" /><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6" /><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />'],
-        ['label' => 'Facebook', 'href' => '#', 'icon' => '<path d="M14 8.5h2V5.5h-2c-2.2 0-3.5 1.4-3.5 3.5v2H8.5v3H10.5V19h3v-8h2.2l.3-3H13.5V9c0-.3.1-.5.5-.5Z" fill="currentColor" />'],
-        ['label' => 'YouTube', 'href' => '#', 'icon' => '<rect x="3" y="6.5" width="18" height="11" rx="3" stroke="currentColor" stroke-width="1.6" /><path d="M10.5 10v4l3.5-2-3.5-2Z" fill="currentColor" />'],
-        ['label' => 'TikTok', 'href' => '#', 'icon' => '<path d="M14 4v9.2a2.8 2.8 0 1 1-2.4-2.77" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><path d="M14 4c.3 2 1.8 3.5 3.8 3.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />'],
-    ];
+    // Social icons: links in config/site.php ('social'), drawn by <x-social-links>.
 @endphp
 
 <footer class="site-footer">
+    {{-- Full-width layout (like the reference footer): one container with small side margins. --}}
+    <div class="footer__container">
     <div class="footer__top">
         <div class="footer__brand">
             <a class="logo notranslate" href="{{ url('/') }}" aria-label="Serengeti Roaming African Safaris, home">
@@ -43,13 +40,7 @@
             <p class="footer__tagline">
                 A Tanzanian-owned safari operator based in Arusha — locally owned, globally trusted, best prices.
             </p>
-            <div class="footer__socials">
-                @foreach ($socials as $social)
-                    <a href="{{ $social['href'] }}" aria-label="{{ $social['label'] }}" target="_blank" rel="noopener">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">{!! $social['icon'] !!}</svg>
-                    </a>
-                @endforeach
-            </div>
+            <x-social-links class="footer__socials" />
         </div>
 
         <div class="footer__col">
@@ -86,7 +77,7 @@
                 <li>
                     <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" rel="noopener">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3a8.5 8.5 0 1 1 15.5-4.6z" /></svg>
-                        WhatsApp us
+                        WhatsApp {{ config('site.whatsapp_display') }}
                     </a>
                 </li>
                 <li class="footer__reply-note">We reply within 24 hours</li>
@@ -94,10 +85,34 @@
         </div>
     </div>
 
+    @if ($partners = config('site.partners'))
+        <div class="footer__partners">
+            <h3 class="footer__partners-heading">Proudly Associated With</h3>
+            <ul>
+                @foreach ($partners as $partner)
+                    <li>
+                        <img src="{{ asset($partner['image']) }}" alt="{{ $partner['name'] }}" title="{{ $partner['name'] }}" width="{{ $partner['width'] }}" height="{{ $partner['height'] }}" loading="lazy" decoding="async" draggable="false">
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (filled($cards = config('site.payment_cards')) && filled($cards['image'] ?? null))
+        <div class="footer__partners footer__payments">
+            <h3 class="footer__partners-heading">We Accept</h3>
+            <img src="{{ asset($cards['image']) }}" alt="{{ $cards['alt'] }}" title="{{ $cards['alt'] }}" width="{{ $cards['width'] }}" height="{{ $cards['height'] }}" loading="lazy" decoding="async" draggable="false">
+        </div>
+    @endif
+
     <div class="footer__bottom">
-        <p>
-            &copy; {{ date('Y') }} Serengeti Roaming African Safaris. All rights reserved.
+        <p class="footer__copyright">&copy; {{ date('Y') }} Serengeti Roaming African Safaris. All rights reserved.</p>
+        <nav class="footer__legal" aria-label="Legal">
+            <a href="{{ route('policy') }}" class="footer__bottom-link">Privacy Policy</a>
+            <a href="{{ route('policy') }}#booking" class="footer__bottom-link">Booking Terms</a>
+            <a href="{{ route('terms') }}" class="footer__bottom-link">Terms &amp; Conditions</a>
             <a href="{{ url('/photo-credits') }}" class="footer__bottom-link">Photo Credits</a>
-        </p>
+        </nav>
+    </div>
     </div>
 </footer>

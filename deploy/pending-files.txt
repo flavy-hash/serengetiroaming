@@ -1,0 +1,2 @@
+# Files changed since the last confirmed deploy (one per line, forward slashes).
+# "- path" marks a deleted file. Emptied after the owner confirms a deploy.

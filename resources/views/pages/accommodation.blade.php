@@ -76,7 +76,7 @@
             @endif
         </div>
 
-        <aside class="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)]">
+        <aside class="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
             <div class="rounded-2xl bg-forest-900 p-7 text-cream-50">
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gold-300">Stay details</p>
                 <dl class="mt-5 space-y-4 text-sm">

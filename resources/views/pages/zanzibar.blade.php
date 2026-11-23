@@ -122,7 +122,7 @@
     <div class="mx-auto grid max-w-6xl gap-12 px-4 lg:grid-cols-[1fr_20rem] lg:items-start lg:px-8">
     <div>
         <div class="text-center lg:text-left">
-            <p class="font-display text-sm uppercase tracking-[0.3em] text-gold-600">Zanzibar Beach Escape · 4 Days</p>
+            <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-gold-600">Zanzibar Beach Escape · 4 Days</p>
             <h2 class="mt-3 font-display text-3xl font-semibold text-forest-900 lg:text-4xl">
                 Package Overview
             </h2>
@@ -218,7 +218,7 @@
 
     </div>
 
-    <aside class="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)]">
+    <aside class="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
         <div class="rounded-2xl bg-forest-900 p-7 text-cream-50">
             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gold-300">From</p>
             <p class="mt-2 font-display text-4xl font-semibold">$650</p>
@@ -350,7 +350,10 @@
 </section>
 
 <section class="mx-auto max-w-7xl px-4 pb-16 lg:px-8">
-    <h2 class="font-display text-2xl font-semibold text-forest-900">Explore Zanzibar</h2>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 class="font-display text-2xl font-semibold text-forest-900">Explore Zanzibar</h2>
+        <a href="{{ route('zanzibar.explore') }}" class="text-sm font-semibold text-gold-600 hover:text-gold-500">See every beach, town and island →</a>
+    </div>
     <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         @foreach ($experiences as $experience)
             <div id="{{ $experience['id'] }}" class="scroll-mt-24 overflow-hidden rounded-2xl border border-forest-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
