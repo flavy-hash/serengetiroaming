@@ -17,8 +17,8 @@ class HomepageHeroTest extends TestCase
             ->assertSee('autoplay', false)
             ->assertSee('muted', false)
             ->assertSee('playsinline', false)
-            ->assertSee(asset('videos/hero-1080.mp4'))
-            ->assertSee(asset('videos/hero-720.mp4'))
+            // Which film plays is the owner's choice (public/videos); it must be an mp4 from that folder.
+            ->assertSeeInOrder(['<source src="'.asset('videos/'), '.mp4" type="video/mp4"'], false)
             ->assertSee(asset('videos/hero-poster.jpg'))
             ->assertSee('id="heroPause"', false)
             ->assertSee('Watch the film')
