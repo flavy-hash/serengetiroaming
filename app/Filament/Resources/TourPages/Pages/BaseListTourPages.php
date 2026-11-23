@@ -9,6 +9,14 @@ use Filament\Support\Icons\Heroicon;
 
 abstract class BaseListTourPages extends ListRecords
 {
+    public function reorderTable(array $order, int|string|null $draggedRecordKey = null): void
+    {
+        parent::reorderTable($order, $draggedRecordKey);
+
+        // Reordering is a bulk query (no model events) and can change a section's main page.
+        \App\Support\NavPreview::flush();
+    }
+
     protected function getHeaderActions(): array
     {
         $category = static::getResource()::category();
