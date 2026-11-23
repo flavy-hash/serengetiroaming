@@ -33,6 +33,19 @@ class Setting extends Model
         return $value === null || $value === '' ? $default : $value;
     }
 
+    /**
+     * The WeChat ID and QR code image shown by the floating WeChat button (no ID = no button).
+     *
+     * @return array{id: ?string, qr: ?string}
+     */
+    public static function wechat(): array
+    {
+        $id = trim((string) static::get('wechat_id', config('site.wechat_id')));
+        $qr = static::get('wechat_qr');
+
+        return ['id' => $id !== '' ? $id : null, 'qr' => is_string($qr) ? TourPage::imageUrl($qr) : null];
+    }
+
     public static function put(string $key, mixed $value): void
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
