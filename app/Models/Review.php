@@ -16,6 +16,7 @@ class Review extends Model
         'email',
         'country',
         'trip_date',
+        'trip_type',
         'rating',
         'title',
         'body',
