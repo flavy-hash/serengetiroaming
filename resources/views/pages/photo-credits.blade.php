@@ -14,7 +14,7 @@
         // Homepage "Top activities".
         ['subject' => 'Walking safari, Katavi National Park (homepage activities)', 'author' => 'Brian Harries', 'license' => 'CC BY 2.0', 'href' => 'https://commons.wikimedia.org/wiki/File:Walking_Safari_in_Katavi_National_Park.jpg'],
         ['subject' => 'Hippos in the Rufiji River (homepage activities)', 'author' => 'Richard Mortel', 'license' => 'CC BY 2.0', 'href' => 'https://commons.wikimedia.org/wiki/File:Hippo_in_the_Rufiji_River,_Selous_Game_Reserve_(4)_(28955071452).jpg'],
-        ['subject' => 'Maasai dancers, Ngorongoro Conservation Area (homepage activities)', 'author' => 'Rwebogora', 'license' => 'CC BY-SA 4.0', 'href' => 'https://commons.wikimedia.org/wiki/File:Maasai_dancers_in_the_Ngorongoro_Conservation_Area,_Tanzania_01.jpg'],
+        ['subject' => 'Maasai dancers, Ngorongoro Conservation Area (homepage activities and "Supporting Local Communities")', 'author' => 'Rwebogora', 'license' => 'CC BY-SA 4.0', 'href' => 'https://commons.wikimedia.org/wiki/File:Maasai_dancers_in_the_Ngorongoro_Conservation_Area,_Tanzania_01.jpg'],
         ['subject' => 'Coffee cherries, Karatu (homepage activities)', 'author' => 'Nina R', 'license' => 'CC BY 2.0', 'href' => 'https://commons.wikimedia.org/wiki/File:Karatu,_Tanzania_(51490064825).jpg'],
         ['subject' => 'Snorkelling trip (homepage activities)', 'author' => 'Mike from Vancouver, Canada', 'license' => 'CC BY-SA 2.0', 'href' => 'https://commons.wikimedia.org/wiki/File:Snorkeling_3_(14703965432).jpg'],
         // Destinations pages (/destinations).
