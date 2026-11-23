@@ -19,13 +19,13 @@
                 class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             >
         @endif
-        <span class="absolute left-3 top-3 rounded-full bg-forest-900/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream-50">
+        <span class="absolute left-3 top-3 rounded-full bg-forest-900/90 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-wide text-cream-50">
             {{ $page->category->getLabel() }}
         </span>
     </div>
     <div class="p-6">
         @if ($tagline)
-            <p class="font-display text-sm italic text-gold-600">{{ $tagline }}</p>
+            <p class="font-accent text-sm italic text-gold-600">{{ $tagline }}</p>
         @endif
         <h3 class="mt-1 font-display text-xl font-semibold text-forest-900">{{ $page->package_name }}</h3>
 
@@ -47,7 +47,7 @@
         <div class="mt-5 flex items-center justify-between border-t border-forest-100 pt-4">
             <div>
                 @if ($page->price_from)
-                    <p class="font-display text-lg font-semibold text-forest-900">From ${{ number_format($page->price_from) }}</p>
+                    <p class="font-display text-lg font-semibold text-gold-500">From ${{ number_format($page->price_from) }}</p>
                     <p class="text-xs text-charcoal-500">per person</p>
                 @else
                     <p class="font-display text-lg font-semibold text-forest-900">Price on request</p>
