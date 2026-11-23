@@ -59,7 +59,7 @@ class ReviewsTable
                     ->label('Homepage')
                     ->disabled(fn (Review $record) => $record->status !== ReviewStatus::Published),
                 ImageColumn::make('photos')
-                    ->disk('public')
+                    ->state(fn (Review $record) => $record->photoUrls())
                     ->imageHeight(28)
                     ->circular()
                     ->stacked()
