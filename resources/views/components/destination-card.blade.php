@@ -1,4 +1,4 @@
-@props(['destination', 'heading' => 'h2'])
+@props(['destination', 'heading' => 'h2', 'showRegion' => true])
 
 {{-- Photo card with the name and one line over a dark gradient; the whole card links to the destination. --}}
 <article class="group relative isolate h-72 overflow-hidden rounded-2xl bg-forest-900 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:h-80">
@@ -8,7 +8,7 @@
     @endif
     <div class="absolute inset-0 -z-10 bg-gradient-to-t from-forest-950/95 via-forest-950/45 to-forest-950/5" aria-hidden="true"></div>
 
-    @if (filled($destination->region))
+    @if ($showRegion && filled($destination->region))
         <span class="absolute left-4 top-4 rounded-full bg-forest-900/80 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-wide text-cream-50 backdrop-blur">
             {{ $destination->region }}
         </span>
