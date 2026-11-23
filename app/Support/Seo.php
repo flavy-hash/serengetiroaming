@@ -57,7 +57,12 @@ class Seo
                 'addressCountry' => config('site.country_code'),
             ],
             'areaServed' => ['@type' => 'Country', 'name' => 'Tanzania'],
-            'sameAs' => config('site.profiles') ?: null,
+            'sameAs' => array_values(array_filter([
+                ...array_values(config('site.social')),
+                ...config('site.profiles'),
+                config('site.tripadvisor_url'),
+                config('site.google_maps_url'),
+            ])) ?: null,
         ]);
     }
 
