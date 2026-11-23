@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Enums\SafariTier;
+use App\Models\Destination;
 use App\Models\NavItem;
 use App\Models\TourPage;
 use Illuminate\Support\Collection;
@@ -101,6 +102,28 @@ class NavPreview
                 'title' => $tier->getLabel().' Safaris',
                 'text' => $tier->getDescription(),
                 'cta' => 'See '.Str::lower($tier->getLabel()).' trips',
+                'href' => $href,
+                'image' => $item->image,
+            ];
+        }
+
+        // A destination page (/destinations/serengeti): its photo and one-line description.
+        if (preg_match('#^/destinations/([^/]+)$#', $path, $m) && $destination = Destination::published()->where('slug', $m[1])->first()) {
+            return [
+                'title' => $destination->name,
+                'text' => $destination->tagline,
+                'cta' => 'Explore '.Str::before($destination->name, ' ('),
+                'href' => $href,
+                'image' => $destination->image ?: $item->image,
+            ];
+        }
+
+        // The accommodation page (optionally for one area: /accommodations?location=serengeti).
+        if ($path === '/accommodations') {
+            return [
+                'title' => "Where You'll Stay",
+                'text' => 'Hand-picked lodges, tented camps and hotels across Tanzania — from Arusha and the Serengeti to Zanzibar.',
+                'cta' => 'See accommodation',
                 'href' => $href,
                 'image' => $item->image,
             ];
